@@ -8310,6 +8310,14 @@ void RtApiPulse::callbackEvent( void )
   MUTEX_UNLOCK( &stream_.mutex );
   RtApi::tickStreamTime();
 
+  if (pah->s_play) {
+    int e = 0;
+    pa_usec_t const lat = pa_simple_get_latency(pah->s_play, &e);
+    if (e == 0) {
+      stream_.latency[0] = lat * stream_.sampleRate / 1000000;
+    }
+  }
+
   if ( doStopStream == 1 )
     stopStream();
 }
