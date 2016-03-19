@@ -408,7 +408,9 @@ double RtApi :: getStreamTime( void )
   struct timeval then;
   struct timeval now;
 
-  if ( stream_.state != STREAM_RUNNING || stream_.streamTime == 0.0 )
+  // If lastTickTimestamp is 0 it means we haven't had a "last tick" since
+  // we started the stream.
+  if ( stream_.state != STREAM_RUNNING || (stream_.lastTickTimestamp.tv_sec == 0 && stream_.lastTickTimestamp.tv_usec == 0) )
     return stream_.streamTime;
 
   gettimeofday( &now, NULL );
@@ -434,6 +436,14 @@ unsigned int RtApi :: getStreamSampleRate( void )
  verifyStream();
 
  return stream_.sampleRate;
+}
+
+void RtApi :: startStream( void )
+{
+#if defined( HAVE_GETTIMEOFDAY )
+  stream_.lastTickTimestamp.tv_sec = 0;
+  stream_.lastTickTimestamp.tv_usec = 0;
+#endif
 }
 
 
@@ -1475,6 +1485,7 @@ void RtApiCore :: closeStream( void )
 void RtApiCore :: startStream( void )
 {
   verifyStream();
+  RtApi::startStream();
   if ( stream_.state == STREAM_RUNNING ) {
     errorText_ = "RtApiCore::startStream(): the stream is already running!";
     error( RtAudioError::WARNING );
@@ -2427,6 +2438,7 @@ void RtApiJack :: closeStream( void )
 void RtApiJack :: startStream( void )
 {
   verifyStream();
+  RtApi::startStream();
   if ( stream_.state == STREAM_RUNNING ) {
     errorText_ = "RtApiJack::startStream(): the stream is already running!";
     error( RtAudioError::WARNING );
@@ -3306,6 +3318,7 @@ bool stopThreadCalled = false;
 void RtApiAsio :: startStream()
 {
   verifyStream();
+  RtApi::startStream();
   if ( stream_.state == STREAM_RUNNING ) {
     errorText_ = "RtApiAsio::startStream(): the stream is already running!";
     error( RtAudioError::WARNING );
@@ -4317,7 +4330,8 @@ void RtApiWasapi::closeStream( void )
 void RtApiWasapi::startStream( void )
 {
   verifyStream();
-
+  RtApi::startStream();
+  
   if ( stream_.state == STREAM_RUNNING ) {
     errorText_ = "RtApiWasapi::startStream: The stream is already running.";
     error( RtAudioError::WARNING );
@@ -6066,6 +6080,8 @@ void RtApiDs :: closeStream()
 void RtApiDs :: startStream()
 {
   verifyStream();
+  RtApi::startStream();
+  
   if ( stream_.state == STREAM_RUNNING ) {
     errorText_ = "RtApiDs::startStream(): the stream is already running!";
     error( RtAudioError::WARNING );
@@ -7743,6 +7759,7 @@ void RtApiAlsa :: startStream()
   // This method calls snd_pcm_prepare if the device isn't already in that state.
 
   verifyStream();
+  RtApi::startStream();
   if ( stream_.state == STREAM_RUNNING ) {
     errorText_ = "RtApiAlsa::startStream(): the stream is already running!";
     error( RtAudioError::WARNING );
@@ -8299,6 +8316,8 @@ void RtApiPulse::callbackEvent( void )
 
 void RtApiPulse::startStream( void )
 {
+  RtApi::startStream();
+  
   PulseAudioHandle *pah = static_cast<PulseAudioHandle *>( stream_.apiHandle );
 
   if ( stream_.state == STREAM_CLOSED ) {
@@ -9237,6 +9256,7 @@ void RtApiOss :: closeStream()
 void RtApiOss :: startStream()
 {
   verifyStream();
+  RtApi::startStream();
   if ( stream_.state == STREAM_RUNNING ) {
     errorText_ = "RtApiOss::startStream(): the stream is already running!";
     error( RtAudioError::WARNING );

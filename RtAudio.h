@@ -756,6 +756,9 @@ protected:
     double streamTime;         // Number of elapsed seconds since the stream started.
 
 #if defined(HAVE_GETTIMEOFDAY)
+    // The gettimeofday() when tickStreamTime was last called, or both
+    // fields at 0 if tickStreamTime has not been called since the last
+    // startStream().
     struct timeval lastTickTimestamp;
 #endif
 
