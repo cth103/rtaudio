@@ -8337,6 +8337,7 @@ void RtApiPulse::stopStream( void )
   }
 
   stream_.state = STREAM_STOPPED;
+  pah->runnable = false;
   MUTEX_LOCK( &stream_.mutex );
 
   if ( pah && pah->s_play ) {
@@ -8371,6 +8372,7 @@ void RtApiPulse::abortStream( void )
   }
 
   stream_.state = STREAM_STOPPED;
+  pah->runnable = false;
   MUTEX_LOCK( &stream_.mutex );
 
   if ( pah && pah->s_play ) {
