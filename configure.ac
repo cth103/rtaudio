@@ -91,7 +91,7 @@ if test x"$GXX" = "xyes"; then
 fi
 
 # Checks for functions
-AC_CHECK_FUNC(gettimeofday, [cppflag="$cppflag -DHAVE_GETTIMEOFDAY"], )
+AC_CHECK_FUNCS(gettimeofday)
 
 # Checks for doxygen
 AC_CHECK_PROG( DOXYGEN, [doxygen], [doxygen] )
