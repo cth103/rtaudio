@@ -3695,7 +3695,7 @@ static const char* getAsioErrorString( ASIOError result )
 #include <audioclient.h>
 #include <avrt.h>
 #include <mmdeviceapi.h>
-#include <functiondiscoverykeys_devpkey.h>
+#include <FunctionDiscoveryKeys_devpkey.h>
 
 //=============================================================================
 
